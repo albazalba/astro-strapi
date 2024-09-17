@@ -26,12 +26,12 @@ import Header from "../../components/Header.astro";
     gap: 40px;
   }
 
-  .product-image {
-    flex: 1;
+  :global(.product-image) {
+    /* flex: 1; */
     max-width: 50%;
   }
 
-  .product-image img {
+  :global(.product-image img) {
     width: 100%;
     height: auto;
     object-fit: cover;
