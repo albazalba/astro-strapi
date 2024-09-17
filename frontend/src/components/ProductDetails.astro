@@ -1,0 +1,70 @@
+---
+const { product } = Astro.props;
+---
+
+<div class="product-details">
+  <div class="product-image">
+    <img src={product.image} alt={product.name} />
+  </div>
+  <div class="product-info">
+    <h1>{product.name}</h1>
+    <p class="price">${product.price}</p>
+    <p class="description">{product.description}</p>
+    <button class="add-to-cart">Add to Cart</button>
+    <div class="additional-info">
+      <h2>Product Details</h2>
+      <ul>
+        <li>Water Resistant: Yes</li>
+        <li>Battery Life: Up to 7 days</li>
+        <li>Compatibility: iOS and Android</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<style>
+  .product-details {
+    display: flex;
+    gap: 2rem;
+  }
+  .product-image {
+    flex: 1;
+  }
+  .product-image img {
+    width: 100%;
+    height: auto;
+  }
+  .product-info {
+    flex: 1;
+  }
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+  .price {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+  .description {
+    margin-bottom: 1rem;
+  }
+  .add-to-cart {
+    background-color: #000;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  .additional-info {
+    margin-top: 2rem;
+  }
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  li {
+    margin-bottom: 0.5rem;
+  }
+</style>

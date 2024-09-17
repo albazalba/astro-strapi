@@ -1,0 +1,21 @@
+---
+import { userStore } from '../lib/useStore';
+
+const user = userStore.getUser();
+
+if (!user) {
+  return Astro.redirect('/login');
+}
+---
+
+<slot />
+
+<script>
+  import { userStore } from '../lib/useStore';
+
+  userStore.subscribe((user) => {
+    if (!user) {
+      window.location.href = '/login';
+    }
+  });
+</script>

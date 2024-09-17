@@ -1,0 +1,144 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Header from "../../components/Header.astro";
+
+// Remove the server-side fetching of the product ID
+---
+
+<Layout title="Product Details - WATCHROOM">
+  <Header />
+  <main class="container">
+    <div id="productDetails" class="product-details">Loading...</div>
+  </main>
+</Layout>
+
+<style>
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    display: flex;
+    gap: 40px;
+  }
+
+  .product-details {
+    display: flex;
+    gap: 40px;
+  }
+
+  .product-image {
+    flex: 1;
+    max-width: 50%;
+  }
+
+  .product-image img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  .product-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  :global(.product-title) {
+    color: #333;
+    font-size: 32px;
+    margin-bottom: 20px;
+  }
+
+  :global(.product-price) {
+    color: #e74c3c;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+
+  :global(.product-description) {
+    color: #666;
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 30px;
+  }
+
+  :global(.add-to-cart-btn) {
+    background-color: #0d0d0d;
+    color: white;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    align-self: flex-start;
+  }
+
+  .add-to-cart-btn:hover {
+    background-color: #45a049;
+  }
+</style>
+
+<script>
+  // Get the product ID from the URL
+  const productId = window.location.pathname.split("/").pop();
+
+  async function fetchProductDetails() {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`/api/products/${productId}?poulate=*`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    const productObj = await response.json();
+    const product = productObj.data.attributes;
+    console.log("🚀 ~ fetchProductDetails ~ product:", product)
+    const productDetailsElement = document.getElementById("productDetails");
+    productDetailsElement.innerHTML = `
+      <div class="product-image">
+        <img src="http://localhost:1337${product.image.data[0].attributes.url}" alt="${product.title}" />
+      </div>
+      <div class="product-info">
+        <h1 class="product-title">${product.title}</h1>
+        <p class="product-price">$${product.price}</p>
+        <p class="product-description">${product.description || 'No description available.'}</p>
+        <button id="addToCart" class="add-to-cart-btn" data-product-id="${productId}">Add to Cart</button>
+      </div>
+    `;
+
+    // Move the event listener inside fetchProductDetails
+    const addToCartButton = document.getElementById("addToCart");
+    addToCartButton.addEventListener("click", addToCart);
+  }
+
+  fetchProductDetails();
+
+  async function addToCart() {
+    const productId = this.dataset.productId;
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user')
+    console.log("🚀 ~ addToCart ~ productId:", productId)
+    try {
+      const response = await fetch('/api/cart', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ userId: JSON.parse(user).id, productId, quantity:1 })
+      });
+      if (!response.ok) {
+        throw new Error("Failed to add to cart");
+      }
+
+      alert("Product added to cart successfully!");
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      alert("Failed to add product to cart. Please try again.");
+    }
+  }
+</script>

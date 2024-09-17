@@ -1,0 +1,92 @@
+---
+// Header.astro
+---
+
+<header>
+  <nav>
+    <a href="/" class="logo">My App</a>
+    <div id="auth-links"></div>
+  </nav>
+</header>
+
+<style>
+  header {
+    background-color: #f8f9fa;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+    text-decoration: none;
+  }
+
+  #auth-links {
+    display: flex;
+    gap: 1rem;
+  }
+
+  #auth-links a, #auth-links button {
+    text-decoration: none;
+    color: #333;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+  }
+
+  #auth-links a:hover, #auth-links button:hover {
+    background-color: #e9ecef;
+  }
+
+  :global(#logout-btn) {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+</style>
+
+<script>
+  import { userStore } from '../lib/useStore';
+  import { logout } from '../lib/api';
+
+  const authLinks = document.getElementById('auth-links');
+
+  function updateAuthLinks(userObj) {
+    const user =  JSON.parse(userObj)
+    if (user) {
+      authLinks.innerHTML = `
+        <span>Welcome, ${user.username}</span>
+              <a href="/cart" class="cart-icon" aria-label="Shopping Cart">🛒</a>
+        <button id="logout-btn">Logout</button>
+      `;
+      document.getElementById('logout-btn').addEventListener('click', handleLogout);
+    } else {
+      authLinks.innerHTML = `
+        <a href="/login">Login</a>
+        <a href="/signup">Sign Up</a>
+      `;
+    }
+  }
+
+  function handleLogout() {
+    logout();
+    window.location.href = '/';
+  }
+
+  // Initial render
+  updateAuthLinks(localStorage.getItem('user'));
+
+  // Subscribe to changes
+  userStore.subscribe(updateAuthLinks);
+</script>

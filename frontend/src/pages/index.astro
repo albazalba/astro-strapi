@@ -1,0 +1,35 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import HeroBanner from '../components/Hero.astro';
+import ProductGrid from '../components/Products.astro';
+---
+
+<Layout title="WATCHROOM - Luxury Watches">
+  <Header />
+  <main>
+    <HeroBanner />
+    <ProductGrid />
+  </main>
+</Layout>
+
+<script>
+    function checkAuth() {
+      const user = localStorage.getItem('user');
+      if (!user) {
+        window.location.href = '/login';
+      } else {
+        document.getElementById('main-content').style.display = 'block';
+      }
+    }
+
+    // Run the check when the page loads
+    window.onload = checkAuth;
+  </script>
+
+<style>
+  main {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+</style>
